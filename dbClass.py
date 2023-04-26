@@ -141,7 +141,7 @@ class dbClass:
 
     def addDevices(self, data):
         if self.check_conn():
-            if (!data.devices):
+            if not data.devices:
                 return True
 
             ts = time.time()
