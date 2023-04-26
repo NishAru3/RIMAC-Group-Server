@@ -141,6 +141,9 @@ class dbClass:
 
     def addDevices(self, data):
         if self.check_conn():
+            if (!data.devices):
+                return True
+
             ts = time.time()
             timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
             sqlStr = "INSERT INTO cse191.ble_logs\
