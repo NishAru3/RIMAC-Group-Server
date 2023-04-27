@@ -184,7 +184,4 @@ class dbClass:
                 # if the lastseen_ts is longer than 5 minutes ago, set it to inactive
                 elif ((datetime.datetime.now() - result[i][2]).total_seconds() / 60 > 5):
                     cursor.execute("UPDATE cse191.devices SET status = \"TIMEOUT\" WHERE mac = \"{}\"".format(result[i][1]))
-                # the device is still ACTIVE
-                else:
-                    cursor.execute("UPDATE cse191.devices SET status = \"ACTIVE\" WHERE mac = \"{}\"".format(result[i][1]))
             # self.db.commit()
