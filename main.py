@@ -75,14 +75,8 @@ def process_list_devices(response: Response, gn: Union[str,None] = None, outtype
         dl_string = device_list.to_string()
     return dl_string
 
-# @app.post('/list-device')
-# def process_list_device(response: Response, data: DeviceInfo):
-#     setHeaders(response)
-#     device_list = cse191db.loadDevices()
-#     return {"resp": "OK"}
-
 @app.post('/register-device')
-def process_register_device(response: Response, data: DeviceInfo):
+def process_register_device(response: Response, data: DeviceLog): #Changed argument to DeviceLog to register the ESP device.
     setHeaders(response)
     if (not cse191db.registerDevice(data)):
         return {"resp": "FAIL"}
