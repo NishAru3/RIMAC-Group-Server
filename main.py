@@ -5,6 +5,7 @@ import pandas as pd
 import uvicorn
 from fastapi import FastAPI, Response
 from fastapi.responses import PlainTextResponse
+from fastapi_utils.tasks import repeat_every
 from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -91,6 +92,15 @@ def process_log_devices(response: Response, data: DeviceLog):
     else: 
         return {"resp": "OK"}
 
+
+@app.on_event("startup")
+@repeat_every(seconds=60*5)
+def process_set_timeouts():
+    print("Timeout Check:")
+    if (cse191db.timeoutCheck()):
+        print("Successfully parsed for timeouts")
+    else:
+        print("Error parsing timeouts")
 
 # run the app
 if __name__ == '__main__':

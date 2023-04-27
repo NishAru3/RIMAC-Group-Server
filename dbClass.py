@@ -181,19 +181,15 @@ class dbClass:
                 print(sqlStr)
                 print(e)
         return False
-    
+  
     def timeoutCheck(self):
-         if self.check_conn():
-            sqlStr = "SELECT * FROM cse191.devices"
+        if self.check_conn():
+            newSQLStr = "UPDATE cse191.devices SET status=\"TIMEOUT\" WHERE DATE_ADD(lastseen_ts, INTERVAL 5 MINUTE) < NOW()"
             cursor = self.db.cursor()
-            cursor.execute(sqlStr)
-            result = cursor.fetchall()
-            # print(len(result))
-            for i in range(len(result)):
-                # set all rows where the lastseen_ts is currently none to TIMEOUT
-                if result[i][2] == None:
-                    cursor.execute("UPDATE cse191.devices SET status = \"TIMEOUT\" WHERE mac = \"{}\"".format(result[i][1]))
-                # if the lastseen_ts is longer than 5 minutes ago, set it to inactive
-                elif ((datetime.datetime.now() - result[i][2]).total_seconds() / 60 > 5):
-                    cursor.execute("UPDATE cse191.devices SET status = \"TIMEOUT\" WHERE mac = \"{}\"".format(result[i][1]))
-            # self.db.commit()
+            try:
+                cursor.execute(newSQLStr)
+                cursor.execute("COMMIT;")
+                return True
+            except Error as e:
+                print(e)
+        return False
