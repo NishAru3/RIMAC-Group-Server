@@ -11,13 +11,10 @@ from pydantic import BaseModel
 
 from dbClass import dbClass
 
+
 app = FastAPI()
 
 cse191db = dbClass()
-
-origins = [
-    "https://cse191.ucsd.edu"
-]
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,13 +25,11 @@ app.add_middleware(
     max_age=3600,
 )
 
-
 def setHeaders(response: Response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Origin,X-Requested-With,Content-Type,Authorization,Accept'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,GET,PUT,POST,DELETE'
     response.headers['Service'] = 'CSE191-API'
-
 
 class DeviceInfo(BaseModel):
     group_id: str
@@ -44,6 +39,15 @@ class DeviceLog(BaseModel):
     gn: str
     espmac: str
     devices: list
+
+########### Constants ###########
+
+BLE_SCANTIME = 1000
+
+
+
+
+########### Functions ###########
 
 @app.get('/', response_class=PlainTextResponse)
 def home():
@@ -101,6 +105,14 @@ def process_set_timeouts():
         print("Successfully parsed for timeouts")
     else:
         print("Error parsing timeouts")
+
+######### UTIL FUNCTIONS #############
+
+# Change based on ble scantime
+@app.get('/get-scantime', response_class=PlainTextResponse)
+def process_get_scantime(response: Response):
+    setHeaders(response)
+    return {"scantime": BLE_SCANTIME}
 
 # run the app
 if __name__ == '__main__':
