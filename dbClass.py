@@ -105,8 +105,7 @@ class dbClass:
                 result = cursor.fetchall()
                 print(result)
                 stu_df = pd.DataFrame.from_dict(result) 
-                stu_df.columns=["device_id", "mac", "lastseen_ts", "last_rssi", "groupname",
-                    "location", "lang","long", "color", "groupnumber", "status"]
+                stu_df.columns=["device_id", "mac", "lastseen_ts", "last_rssi", "groupname", "location", "lang","long", "color", "groupnumber", "status"]
                 print(stu_df)
             except Error as e:
                 print(f"The error '{e}' occurred")
@@ -182,3 +181,19 @@ class dbClass:
                 print(sqlStr)
                 print(e)
         return False
+    
+    def timeoutCheck(self):
+         if self.check_conn():
+            sqlStr = "SELECT * FROM cse191.devices"
+            cursor = self.db.cursor()
+            cursor.execute(sqlStr)
+            result = cursor.fetchall()
+            # print(len(result))
+            for i in range(len(result)):
+                # set all rows where the lastseen_ts is currently none to TIMEOUT
+                if result[i][2] == None:
+                    cursor.execute("UPDATE cse191.devices SET status = \"TIMEOUT\" WHERE mac = \"{}\"".format(result[i][1]))
+                # if the lastseen_ts is longer than 5 minutes ago, set it to inactive
+                elif ((datetime.datetime.now() - result[i][2]).total_seconds() / 60 > 5):
+                    cursor.execute("UPDATE cse191.devices SET status = \"TIMEOUT\" WHERE mac = \"{}\"".format(result[i][1]))
+            # self.db.commit()
