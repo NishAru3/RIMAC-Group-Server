@@ -36,13 +36,14 @@ def setHeaders(response: Response):
     response.headers['Service'] = 'CSE191-API'
 
 class DeviceInfo(BaseModel):
-    group_id: str
-    mac: str
+    gn: str
+    espmac: str
 
 class DeviceLog(BaseModel):
     gn: str
     espmac: str
     devices: list
+
 
 ########### Constants ###########
 
@@ -85,7 +86,7 @@ def process_list_devices(response: Response, gn: Union[str,None] = None, outtype
     return dl_string
 
 @app.post('/register-device')
-def process_register_device(response: Response, data: DeviceLog): #Changed argument to DeviceLog to register the ESP device.
+def process_register_device(response: Response, data: DeviceInfo):
     setHeaders(response)
     if (not cse191db.registerDevice(data)):
         return {"resp": "FAIL"}

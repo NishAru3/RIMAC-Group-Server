@@ -112,74 +112,69 @@ class dbClass:
 
             return stu_df
     
-    def registerDevice(self, data, gn):
-        """
-            Resister or update an ESP32 chip to the device table. 
-            For now using last device in devices list to update last_rssi field.
-            Incoming request should include ESP32's wifi RSSI.
-        """
+    def registerDevice(self, data):
         if self.check_conn():
-            mac = data.espmac
-            rssi = data.devices[-1].get("rssi")
-            sqlstr = f"SELECT mac FROM cse191.devices WHERE mac = \"{mac}\""
+            sqlstr = f"SELECT mac FROM cse191.devices WHERE mac = \"{data.espmac}\""
             cursor = self.db.cursor()
-            result = None
             cursor.execute(sqlstr)
             result = cursor.fetchall()
-            print(result)
             try:
+                ts = time.time()
+                timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if len(result) == 0: #Insert if not registered
-                    ts = time.time()
-                    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                    group_name_finder = f"SELECT groupname from cse191.students where groupnumber = {data.gn};"
-                    cursor.execute(group_name_finder)
-                    groupname = cursor.fetchall()
-                    sqlstr = f"INSERT INTO cse191.devices (mac, last_rssi, lastseen_ts, groupname, groupnumber, status)\
-                        VALUES (\"{mac}\", {rssi}, \"{timestamp}\", \"{groupname}\", {gn}, \"ACTIVE\");"
-                    cursor.execute(sqlstr)
-                    cursor.execute("COMMIT;")
-                    return True
+                    sqlstr = f"INSERT INTO cse191.devices (mac,  lastseen_ts, groupname, groupnumber, status)\
+                        VALUES (\"{data.mac}\", \"{timestamp}\", \"CSE191\", {data.gn}, \"ACTIVE\");"
                 else: #Update last_rssi and last_seen_ts if already exists
-                    ts = time.time()
-                    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') 
                     sqlstr = f"UPDATE cse191.devices \
-                                SET last_rssi = {rssi}, lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
-                                WHERE mac = \"{mac}\";"
-                    cursor.execute(sqlstr)
-                    cursor.execute("COMMIT;")
-                    return True
-            except Error as e:
-                print(f"The error '{e}' has occurred")
-                return False
-    
-    def addDevices(self, data):
-        if self.check_conn():
-            if not data.devices:
-                return True
-
-            ts = time.time()
-            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-            sqlStr = "INSERT INTO cse191.ble_logs\
-                    (device_mac, ble_rssi, ble_mac, groupname, groupnumber, log_ts, ble_count)\
-                    VALUES"
-            
-            for i in range(len(data.devices)):
-                device = data.devices[i]
-                valStr = " ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(data.espmac, device.get("rssi"), device.get("mac"), "Global API", data.gn, timestamp, "30")
-                sqlStr += valStr
-                if i == len(data.devices)-1:
-                    sqlStr += ";"
-                else:
-                    sqlStr += ","
-
-            cursor = self.db.cursor()
-            try:
-                cursor.execute(sqlStr)
+                                SET lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
+                                WHERE mac = \"{data.mac}\";"
+                cursor.execute(sqlstr)
                 cursor.execute("COMMIT;")
                 return True
             except Error as e:
-                print(sqlStr)
-                print(e)
+                print(f"The error '{e}' has occurred")
+        return False
+    
+    def addDevices(self, data):
+        if self.check_conn():
+            
+            ts = time.time()
+            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            cursor = self.db.cursor()
+
+            registerSQLString = f"UPDATE cse191.devices \
+                            SET lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
+                            WHERE mac = \"{data.mac}\";"
+
+            if data.devices:
+                
+                sqlStr = "INSERT INTO cse191.ble_logs\
+                    (device_mac, ble_rssi, ble_mac, groupname, groupnumber, log_ts, ble_count)\
+                    VALUES"
+                for i in range(len(data.devices)):
+                    device = data.devices[i]
+                    valStr = " ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(data.espmac, device.get("rssi"), device.get("mac"), "Global API", data.gn, timestamp, "30")
+                    sqlStr += valStr
+                    if i == len(data.devices)-1:
+                        registerSQLString = f"UPDATE cse191.devices \
+                            SET lastseen_ts = \"{timestamp}\", last_rssi = \"{device.get('rssi')}\", status=\"ACTIVE\" \
+                            WHERE mac = \"{data.mac}\";"
+                        sqlStr += ";"
+                    else:
+                        sqlStr += ","
+                try:
+                    cursor.execute(sqlStr)
+                    cursor.execute("COMMIT;")
+                except Error as e:
+                    print(f"The error '{e}' has occurred")
+                    return False
+            try:
+                cursor.execute(registerSQLString)
+                cursor.execute("COMMIT;")
+                return True
+            except Error as e:
+                print(f"The error '{e}' has occurred")
+
         return False
   
     def timeoutCheck(self):
