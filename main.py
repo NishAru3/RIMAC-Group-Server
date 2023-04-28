@@ -16,6 +16,10 @@ app = FastAPI()
 
 cse191db = dbClass()
 
+origins = [
+    "https://cse191.ucsd.edu"
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
