@@ -123,11 +123,11 @@ class dbClass:
                 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if len(result) == 0: #Insert if not registered
                     sqlstr = f"INSERT INTO cse191.devices (mac,  lastseen_ts, groupname, groupnumber, status)\
-                        VALUES (\"{data.mac}\", \"{timestamp}\", \"CSE191\", {data.gn}, \"ACTIVE\");"
+                        VALUES (\"{data.espmac}\", \"{timestamp}\", \"CSE191\", {data.gn}, \"ACTIVE\");"
                 else: #Update last_rssi and last_seen_ts if already exists
                     sqlstr = f"UPDATE cse191.devices \
                                 SET lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
-                                WHERE mac = \"{data.mac}\";"
+                                WHERE mac = \"{data.espmac}\";"
                 cursor.execute(sqlstr)
                 cursor.execute("COMMIT;")
                 return True
@@ -144,7 +144,7 @@ class dbClass:
 
             registerSQLString = f"UPDATE cse191.devices \
                             SET lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
-                            WHERE mac = \"{data.mac}\";"
+                            WHERE mac = \"{data.espmac}\";"
 
             if data.devices:
                 
@@ -158,7 +158,7 @@ class dbClass:
                     if i == len(data.devices)-1:
                         registerSQLString = f"UPDATE cse191.devices \
                             SET lastseen_ts = \"{timestamp}\", last_rssi = \"{device.get('rssi')}\", status=\"ACTIVE\" \
-                            WHERE mac = \"{data.mac}\";"
+                            WHERE mac = \"{data.espmac}\";"
                         sqlStr += ";"
                     else:
                         sqlStr += ","

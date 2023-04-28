@@ -114,7 +114,7 @@ def process_set_timeouts():
 ######### UTIL FUNCTIONS #############
 
 # Change based on ble scantime
-@app.get('/get-scantime', response_class=PlainTextResponse)
+@app.get('/get-scantime')
 def process_get_scantime(response: Response):
     setHeaders(response)
     return {"scantime": BLE_SCANTIME}
