@@ -150,7 +150,7 @@ class dbClass:
                 print(f"The error '{e}' has occurred")
         return False
     
-    def addDevices(self, data, rssi_limit):
+    def addDevices(self, data):
         if self.check_conn():
             
             ts = time.time()
@@ -168,13 +168,13 @@ class dbClass:
                     VALUES"
                 for i in range(len(data.devices)):
                     device = data.devices[i]
-                    if (device.get("rssi") >= rssi_limit):
-                        sqlStr += " ('{0}', '{1}', '{2}', '{3}')".format(data.espmac, device.get("rssi"), device.get("mac"), timestamp)
-                        if i != len(data.devices)-1:
-                            sqlStr += ","
-                        registerSQLString = f"UPDATE cse191.devices \
-                            SET lastseen_ts = \"{timestamp}\", last_rssi = \"{device.get('rssi')}\", status=\"ACTIVE\" \
-                            WHERE mac = \"{data.espmac}\";"
+                    # if (device.get("rssi") >= rssi_limit):
+                    sqlStr += " ('{0}', '{1}', '{2}', '{3}')".format(data.espmac, device.get("rssi"), device.get("mac"), timestamp)
+                    if i != len(data.devices)-1:
+                        sqlStr += ","
+                    registerSQLString = f"UPDATE cse191.devices \
+                        SET lastseen_ts = \"{timestamp}\", last_rssi = \"{device.get('rssi')}\", status=\"ACTIVE\" \
+                        WHERE mac = \"{data.espmac}\";"
                 sqlStr += ";"
                 try:
                     cursor.execute(sqlStr)

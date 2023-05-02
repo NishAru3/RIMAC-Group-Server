@@ -95,15 +95,17 @@ def process_register_device(response: Response, data: DeviceInfo):
 @app.post('/log-devices')
 def process_log_devices(response: Response, data: DeviceLog):
     setHeaders(response)
-    if (not cse191db.addDevices(data, localSettings["rssi_limit"])):
+    if (not cse191db.addDevices(data)):
         return {
                     "resp": "FAIL",
-                    "sample_period": localSettings["sample_period"]
+                    "sample_period": localSettings["sample_period"],
+                    "rssi": localSettings["rssi_limit"]
                 }
     else: 
         return {
                     "resp": "OK",
-                    "sample_period": localSettings["sample_period"]
+                    "sample_period": localSettings["sample_period"],
+                    "rssi": localSettings["rssi_limit"]
                 }
     
 @app.on_event("startup")
