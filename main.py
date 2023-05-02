@@ -47,7 +47,7 @@ class DeviceLog(BaseModel):
 
 localSettings = {
     "rssi_limit": -90,
-    "sample_period": 20
+    "sample_period": 30
 }
 
 

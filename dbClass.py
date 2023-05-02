@@ -114,7 +114,7 @@ class dbClass:
 
     def getSettings(self):
         if self.check_conn():
-            sqlStr = "SELECT * FROM cse191.settings"
+            sqlStr = "FETCH FROM cse191.settings"
             cursor = self.db.cursor()
             result = None
             try:
