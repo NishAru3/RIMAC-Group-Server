@@ -105,7 +105,19 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "resp": "OK",
                     "sample_period": localSettings["sample_period"]
                 }
-
+    
+@app.get('/check-settings')
+def process_list_devices(response: Response):
+    setHeaders(response)
+    settings = cse191db.getSettings()
+    if (settings):
+        return  {
+                    "rssi_limit": settings["rssi_limit"][0],
+                    "sample_period": settings["sample_period"][0]
+                }
+    return {
+        "resp": "did not get settings"
+    }
 
 @app.on_event("startup")
 @repeat_every(seconds=60*5)
