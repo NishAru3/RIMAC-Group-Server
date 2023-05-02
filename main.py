@@ -106,18 +106,6 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "sample_period": localSettings["sample_period"]
                 }
     
-@app.get('/check-settings')
-def process_list_devices(response: Response):
-    setHeaders(response)
-    settings = cse191db.getSettings()
-    if (settings):
-        return {
-            "resp": settings
-        }
-    return {
-        "resp": "did not get settings"
-    }
-
 @app.on_event("startup")
 @repeat_every(seconds=60*5)
 def process_set_timeouts():
@@ -127,9 +115,9 @@ def process_set_timeouts():
     else:
         print("Error parsing timeouts")
     settings = cse191db.getSettings()
-    # if (settings):
-    #     localSettings["rssi_limit"] = settings["rssi_limit"][0]
-    #     localSettings["sample_period"] = settings["sample_period"][0]
+    if (settings is not False):
+        localSettings["rssi_limit"] = settings["rssi_limit"].iloc[0]
+        localSettings["sample_period"] = int(settings["sample_period"].iloc[0])
 
 ######### UTIL FUNCTIONS #############
 
