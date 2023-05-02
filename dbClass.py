@@ -119,12 +119,14 @@ class dbClass:
             result = None
             try:
                 cursor.execute(sqlStr)
+                return "it executed alright"
                 result = cursor.fetchall()
                 settings_df = pd.DataFrame.from_dict(result) 
                 settings_df.columns=["setting_id", "rssi_limit", "sample_period"]
                 return settings_df
             except Error as e:
                 print(f"The error '{e}' occurred")
+                return "The error: " + e
         return False
     
     def registerDevice(self, data):

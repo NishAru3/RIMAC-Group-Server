@@ -111,10 +111,9 @@ def process_list_devices(response: Response):
     setHeaders(response)
     settings = cse191db.getSettings()
     if (settings):
-        return  {
-                    "rssi_limit": settings["rssi_limit"][0],
-                    "sample_period": settings["sample_period"][0]
-                }
+        return {
+            "resp": settings
+        }
     return {
         "resp": "did not get settings"
     }
@@ -128,9 +127,9 @@ def process_set_timeouts():
     else:
         print("Error parsing timeouts")
     settings = cse191db.getSettings()
-    if (settings):
-        localSettings["rssi_limit"] = settings["rssi_limit"][0]
-        localSettings["sample_period"] = settings["sample_period"][0]
+    # if (settings):
+    #     localSettings["rssi_limit"] = settings["rssi_limit"][0]
+    #     localSettings["sample_period"] = settings["sample_period"][0]
 
 ######### UTIL FUNCTIONS #############
 
