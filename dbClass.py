@@ -138,7 +138,7 @@ class dbClass:
                 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if len(result) == 0: #Insert if not registered
                     sqlstr = f"INSERT INTO cse191.devices (mac,  lastseen_ts, groupname, groupnumber, status)\
-                        VALUES (\"{data.espmac}\", \"{timestamp}\", \"CSE191\", {data.gn}, \"ACTIVE\");"
+                        VALUES (\"{data.espmac}\", \"{timestamp}\", \"CSE191\", 0, \"ACTIVE\");"
                 else: #Update last_rssi and last_seen_ts if already exists
                     sqlstr = f"UPDATE cse191.devices \
                                 SET lastseen_ts = \"{timestamp}\", status=\"ACTIVE\" \
@@ -164,11 +164,11 @@ class dbClass:
             if data.devices:
                 
                 sqlStr = "INSERT INTO cse191.ble_logs\
-                    (device_mac, ble_rssi, ble_mac, groupname, groupnumber, log_ts, ble_count)\
+                    (device_mac, ble_rssi, ble_mac, log_ts)\
                     VALUES"
                 for i in range(len(data.devices)):
                     device = data.devices[i]
-                    valStr = " ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')".format(data.espmac, device.get("rssi"), device.get("mac"), "Global API", data.gn, timestamp, "30")
+                    valStr = " ('{0}', '{1}', '{2}', '{3}')".format(data.espmac, device.get("rssi"), device.get("mac"), timestamp)
                     sqlStr += valStr
                     if i == len(data.devices)-1:
                         registerSQLString = f"UPDATE cse191.devices \
