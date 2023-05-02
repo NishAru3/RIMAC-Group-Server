@@ -36,11 +36,9 @@ def setHeaders(response: Response):
     response.headers['Service'] = 'CSE191-API'
 
 class DeviceInfo(BaseModel):
-    gn: str
     espmac: str
 
 class DeviceLog(BaseModel):
-    gn: str
     espmac: str
     devices: list
 
