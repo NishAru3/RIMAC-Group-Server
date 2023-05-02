@@ -45,11 +45,12 @@ class DeviceLog(BaseModel):
     devices: list
 
 
-########### Constants ###########
+########### Local Storage ########
 
-BLE_SCANTIME = 1000
-
-
+localSettings = {
+    "rssi_limit": -90,
+    "sample_period": 20
+}
 
 
 ########### Functions ###########
@@ -97,9 +98,15 @@ def process_register_device(response: Response, data: DeviceInfo):
 def process_log_devices(response: Response, data: DeviceLog):
     setHeaders(response)
     if (not cse191db.addDevices(data)):
-        return {"resp": "FAIL"}
+        return {
+                    "resp": "FAIL",
+                    "sample_period": localSettings["sample_period"]
+                }
     else: 
-        return {"resp": "OK"}
+        return {
+                    "resp": "OK",
+                    "sample_period": localSettings["sample_period"]
+                }
 
 
 @app.on_event("startup")
@@ -110,14 +117,18 @@ def process_set_timeouts():
         print("Successfully parsed for timeouts")
     else:
         print("Error parsing timeouts")
+    settings = cse191db.getSettings()
+    if (settings):
+        localSettings["rssi_limit"] = settings["rssi_limit"][0]
+        localSettings["sample_period"] = settings["sample_period"][0]
 
 ######### UTIL FUNCTIONS #############
 
 # Change based on ble scantime
-@app.get('/get-scantime')
-def process_get_scantime(response: Response):
-    setHeaders(response)
-    return {"scantime": BLE_SCANTIME}
+# @app.get('/get-scantime')
+# def process_get_scantime(response: Response):
+#     setHeaders(response)
+#     return {"scantime": BLE_SCANTIME}
 
 # run the app
 if __name__ == '__main__':

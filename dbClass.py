@@ -111,6 +111,21 @@ class dbClass:
                 print(f"The error '{e}' occurred")
 
             return stu_df
+
+    def getSettings(self):
+        if self.check_conn():
+            sqlStr = "FETCH FROM cse191.settings"
+            cursor = self.db.cursor()
+            result = None
+            try:
+                cursor.execute(sqlStr)
+                result = cursor.fetchall()
+                settings_df = pd.DataFrame.from_dict(result) 
+                settings_df.columns=["setting_id", "rssi_limit", "sample_period"]
+                return settings_df
+            except Error as e:
+                print(f"The error '{e}' occurred")
+        return False
     
     def registerDevice(self, data):
         if self.check_conn():
