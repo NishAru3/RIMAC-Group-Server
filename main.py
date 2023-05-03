@@ -95,17 +95,17 @@ def process_register_device(response: Response, data: DeviceInfo):
 @app.post('/log-devices')
 def process_log_devices(response: Response, data: DeviceLog):
     setHeaders(response)
-    if (not cse191db.addDevices(data, localSettings["rssi_limit"])):
+    if (not cse191db.addDevices(data)):
         return {
                     "resp": "FAIL",
                     "sample_period": localSettings["sample_period"],
-                    "rssi_threshold": -70
+                    "rssi_threshold": localSettings["rssi_limit"]
                 }
     else: 
         return {
                     "resp": "OK",
                     "sample_period": localSettings["sample_period"],
-                    "rssi_threshold": -70
+                    "rssi_threshold": localSettings["rssi_limit"]
                 }
     
 @app.on_event("startup")
@@ -118,7 +118,7 @@ def process_set_timeouts():
         print("Error parsing timeouts")
     settings = cse191db.getSettings()
     if (settings is not False):
-        localSettings["rssi_limit"] = settings["rssi_limit"].iloc[0]
+        localSettings["rssi_limit"] = int(settings["rssi_limit"].iloc[0])
         localSettings["sample_period"] = int(settings["sample_period"].iloc[0])
 
 ######### UTIL FUNCTIONS #############
