@@ -50,7 +50,7 @@ localSettings = {
     "sample_period": 30
 }
 
-
+ 
 ########### Functions ###########
 
 @app.get('/', response_class=PlainTextResponse)
@@ -98,12 +98,14 @@ def process_log_devices(response: Response, data: DeviceLog):
     if (not cse191db.addDevices(data, localSettings["rssi_limit"])):
         return {
                     "resp": "FAIL",
-                    "sample_period": localSettings["sample_period"]
+                    "sample_period": localSettings["sample_period"],
+                    "rssi_threshold": -70
                 }
     else: 
         return {
                     "resp": "OK",
-                    "sample_period": localSettings["sample_period"]
+                    "sample_period": localSettings["sample_period"],
+                    "rssi_threshold": -70
                 }
     
 @app.on_event("startup")
