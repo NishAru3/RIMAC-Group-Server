@@ -112,7 +112,7 @@ def process_log_devices(response: Response, data: DeviceLog):
 def process_get_all_data(response: Response):
     setHeaders(response)
     # beginTime = datetime.datetime.now()
-    # allData = cse191db.getAllData()
+    allData = cse191db.getAllData()
     dl_string = {"Response": "Failed"}
     # if (allData):
     #     dl_string = allData.to_json(orient="records")
