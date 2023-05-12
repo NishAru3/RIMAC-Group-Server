@@ -108,7 +108,7 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "rssi_threshold": localSettings["rssi_limit"]
                 }
     
-@app.get('/get-all-data', response_class=PlainTextResponse)
+@app.get('/get-all-data')
 def process_get_all_data(response: Response):
     setHeaders(response)
     # beginTime = datetime.datetime.now()
