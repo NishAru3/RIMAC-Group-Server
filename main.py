@@ -108,16 +108,16 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "rssi_threshold": localSettings["rssi_limit"]
                 }
     
-@app.get('/get_all_data', response_class=PlainTextResponse)
+@app.get('/get-all-data', response_class=PlainTextResponse)
 def process_get_all_data(response: Response):
     setHeaders(response)
-    beginTime = datetime.datetime.now()
-    allData = cse191db.getAllData()
+    # beginTime = datetime.datetime.now()
+    # allData = cse191db.getAllData()
     dl_string = {"Response": "Failed"}
-    if (allData):
-        dl_string = allData.to_json(orient="records")
-    endTime = datetime.datetime.now()
-    print("TimeDiff:  " , beginTime, "   ", endTime)
+    # if (allData):
+    #     dl_string = allData.to_json(orient="records")
+    # endTime = datetime.datetime.now()
+    # print("TimeDiff:  " , beginTime, "   ", endTime)
     return dl_string
 
 
