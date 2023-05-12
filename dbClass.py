@@ -190,6 +190,20 @@ class dbClass:
                 print(f"The error '{e}' has occurred")
 
         return False
+    
+    def getAllData(self):
+        if self.check_conn():
+            newSQLStr = "SELECT * FROM cse191.ble_logs"
+            cursor = self.db.cursor()
+            try:
+                cursor.execute(newSQLStr)
+                result = cursor.fetchall()
+                data_df = pd.DataFrame.from_dict(result) 
+                data_df.columns=["log_id", "device_mac", "ble_rssi", "ble_mac", "log_ts"]
+                return data_df
+            except Error as e:
+                print(e)
+        return False
   
     def timeoutCheck(self):
         if self.check_conn():

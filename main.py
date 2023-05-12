@@ -8,7 +8,7 @@ from fastapi.responses import PlainTextResponse
 from fastapi_utils.tasks import repeat_every
 from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
+import datetime
 from dbClass import dbClass
 
 
@@ -107,6 +107,20 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "sample_period": localSettings["sample_period"],
                     "rssi_threshold": localSettings["rssi_limit"]
                 }
+    
+@app.get('/get_all_data', response_class=PlainTextResponse)
+def process_get_all_data(response: Response):
+    setHeaders(response)
+    beginTime = datetime.datetime.now()
+    allData = cse191db.getAllData()
+    dl_string = {"Response": "Failed"}
+    if (allData):
+        dl_string = allData.to_json(orient="records")
+    endTime = datetime.datetime.now()
+    print("TimeDiff:  " , beginTime, "   ", endTime)
+    return dl_string
+
+
     
 @app.on_event("startup")
 @repeat_every(seconds=60*5)
