@@ -121,7 +121,7 @@ def process_set_timeouts():
         localSettings["rssi_limit"] = int(settings["rssi_limit"].iloc[0])
         localSettings["sample_period"] = int(settings["sample_period"].iloc[0])
 
-@app.get('/get_coords')
+@app.get('/get-floor-data')
 def process_get_coords(response: Response, floor: int = 1, date: str | None = None):
     """_summary_
 
@@ -133,7 +133,11 @@ def process_get_coords(response: Response, floor: int = 1, date: str | None = No
     Returns:
         _type_: Tabular data/json response? TODO
     """
-    return {"response": response, "date": date}
+    setHeaders(response)
+    data = cse191db.getFloorData(floor, date)
+    if data:
+        return data.to_json()
+    return {"resp": "Error occured"}
 
 ######### UTIL FUNCTIONS #############
 
