@@ -118,7 +118,7 @@ def process_get_all_data(response: Response, data: TimeInfo):
     output = ""
     if (data.time):
         output += " time passed "
-        # row = cse191db.getDataFromTime(data.time)
+        row = cse191db.getDataFromTime(data.time)
         # if (row):
         #     output += " " + row[0] + " " + row[1]
             # return {

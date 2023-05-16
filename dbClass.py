@@ -191,10 +191,10 @@ class dbClass:
 
         return False
     
-    def getDataFromTime(self, time):
+    def getDataFromTime(self, getTime):
         if self.check_conn():
             # 2023-05-08 00:00:07
-            firstTime = datetime.strptime(time, '%y-%d-%m %H:%M:%S')
+            firstTime = datetime.strptime(getTime, '%y-%d-%m %H:%M:%S')
             secondTime = firstTime + datetime.timedelta(seconds=20)
             return (firstTime,secondTime)
             # newSQLStr = "SELECT * FROM cse191.ble_logs"
