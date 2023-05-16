@@ -191,20 +191,27 @@ class dbClass:
 
         return False
     
-    def getAllData(self):
+    def getDataFromTime(self, time):
         if self.check_conn():
-            newSQLStr = "SELECT * FROM cse191.ble_logs"
-            cursor = self.db.cursor()
-            try:
-                cursor.execute(newSQLStr)
-                result = cursor.fetchall()
-                data_df = pd.DataFrame.from_dict(result) 
-                data_df.columns=["log_id", "device_mac", "ble_rssi", "ble_mac", "log_ts"]
-                return data_df
-            except Error as e:
-                print(e)
+            # 2023-05-08 00:00:07
+            firstTime = datetime.strptime(time, '%y-%d-%m %H:%M:%S')
+            secondTime = firstTime + datetime.timedelta(seconds=20)
+            return (firstTime,secondTime)
+            # newSQLStr = "SELECT * FROM cse191.ble_logs"
+            # cursor = self.db.cursor()
+            # try:
+            #     cursor.execute(newSQLStr)
+            #     result = cursor.fetchall()
+            #     data_df = pd.DataFrame.from_dict(result) 
+            #     data_df.columns=["log_id", "device_mac", "ble_rssi", "ble_mac", "log_ts"]
+            #     return data_df
+            # except Error as e:
+            #     print(e)
         return False
     
+
+    
+
     def getFloorData(self, floor, date):
         if self.check_conn():
             SQLStr = f"SELECT * FROM cse191.rimac_data WHERE idfloor_a_rimac={floor} AND ts_5min BETWEEN '{date} 00:00:00' AND '{date} 23:59:59' "

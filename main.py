@@ -42,6 +42,10 @@ class DeviceLog(BaseModel):
     espmac: str
     devices: list
 
+class TimeInfo(BaseModel):
+    time: str
+    # 2023-05-08 00:00:02
+
 
 ########### Local Storage ########
 
@@ -108,17 +112,21 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "rssi_threshold": localSettings["rssi_limit"]
                 }
     
-@app.get('/get-all-data')
-def process_get_all_data(response: Response):
+@app.get('/get-data-from-time')
+def process_get_all_data(response: Response, data: TimeInfo):
     setHeaders(response)
-    # beginTime = datetime.datetime.now()
-    allData = cse191db.getAllData()
-    dl_string = {"Response": "Failed"}
-    # if (allData):
-    #     dl_string = allData.to_json(orient="records")
-    # endTime = datetime.datetime.now()
-    # print("TimeDiff:  " , beginTime, "   ", endTime)
-    return dl_string
+    if (data.time):
+        row = cse191db.getDataFromTime(data.time)
+        if (row):
+            return {
+                "time1": row[0],
+                "time2": row[1]
+            }
+            # return row.to_json(orient="records")
+    return {
+        "response": "Fail"
+    }
+
 
 @app.get('/get-floor-data')
 def process_get_floor_data(response: Response, floor: int = 1, date: str | None = None):
