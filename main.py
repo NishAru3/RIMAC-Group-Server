@@ -115,16 +115,19 @@ def process_log_devices(response: Response, data: DeviceLog):
 @app.get('/get-data-from-time')
 def process_get_all_data(response: Response, data: TimeInfo):
     setHeaders(response)
+    output = ""
     if (data.time):
-        row = cse191db.getDataFromTime(data.time)
-        if (row):
-            return {
-                "time1": row[0],
-                "time2": row[1]
-            }
+        output += " time passed "
+        # row = cse191db.getDataFromTime(data.time)
+        # if (row):
+        #     output += " " + row[0] + " " + row[1]
+            # return {
+            #     "time1": row[0],
+            #     "time2": row[1],
+            # }
             # return row.to_json(orient="records")
     return {
-        "response": "Fail"
+        "response": output
     }
 
 
