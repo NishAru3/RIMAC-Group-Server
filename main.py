@@ -118,7 +118,7 @@ def process_get_all_data(response: Response, data: TimeInfo):
     if (data.time):
         row = cse191db.getDataFromTime(data.time)
         if (row):
-            return row
+            return json.dumps(row)
     return {
         "response": "Failed"
     }

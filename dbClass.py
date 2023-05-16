@@ -195,19 +195,30 @@ class dbClass:
     
     def getDataFromTime(self, getTime):
         if self.check_conn():
-            firstTime = datetime.strptime(getTime, '%Y-%d-%m %H:%M:%S')
-            secondTime = firstTime + timedelta(seconds=20)
-            durationSQLStr = "SELECT * FROM cse191.ble_logs WHERE log_ts >= \"" + firstTime.strftime("%Y-%d-%m %H:%M:%S") + "\" AND log_ts < \"" + secondTime.strftime("%Y-%d-%m %H:%M:%S") + "\""
-            cursor = self.db.cursor()
-            try:
-                cursor.execute(durationSQLStr)
-                result = cursor.fetchall()
-                data_df = pd.DataFrame.from_dict(result) 
-                data_df.columns=["log_id", "device_mac", "ble_rssi", "ble_mac", "log_ts"]
-                data_json = data_df.to_json(orient="records")
-                return data_json
-            except Error as e:
-                print(e)
+            initialTime = datetime.strptime(getTime, '%Y-%d-%m %H:%M:%S')
+            output = {}
+            # firstTime = datetime.strptime(getTime, '%Y-%d-%m %H:%M:%S')
+            # secondTime = firstTime + timedelta(seconds=20)
+            for i in range(20):
+                firstTime = initialTime + timedelta(minutes=(5*i))
+                secondTime = firstTime + timedelta(seconds=20)
+                firstTime = firstTime.strftime("%Y-%d-%m %H:%M:%S")
+                secondTime = secondTime.strftime("%Y-%d-%m %H:%M:%S")
+                output[firstTime] = {}
+                durationSQLStr = "SELECT * FROM cse191.ble_logs WHERE log_ts >= \"" + firstTime + "\" AND log_ts < \"" + secondTime + "\""
+                cursor = self.db.cursor()
+                try:
+                    cursor.execute(durationSQLStr)
+                    result = cursor.fetchall()
+                    data_df = pd.DataFrame.from_dict(result) 
+                    data_df.columns=["log_id", "device_mac", "ble_rssi", "ble_mac", "log_ts"]
+                    for index, row in data_df.iterrows():
+                        if row["ble_mac"] not in output[firstTime]:
+                            output[firstTime][row["ble_mac"]] = {}
+                        output[firstTime][row["ble_mac"]][row["device_mac"]] = row["ble_rssi"] 
+                except Error as e:
+                    print(e)
+            return output
         return False
     
 
