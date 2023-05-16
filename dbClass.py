@@ -197,7 +197,7 @@ class dbClass:
         if self.check_conn():
             firstTime = datetime.strptime(getTime, '%Y-%d-%m %H:%M:%S')
             secondTime = firstTime + timedelta(seconds=20)
-            durationSQLStr = "SELECT * FROM cse191.ble_logs WHERE log_ts >= " + firstTime + " AND log_ts < " + secondTime
+            durationSQLStr = "SELECT * FROM cse191.ble_logs WHERE log_ts >= \"" + firstTime.strftime("%Y-%d-%m %H:%M:%S") + "\" AND log_ts < \"" + secondTime.strftime("%Y-%d-%m %H:%M:%S") + "\""
             cursor = self.db.cursor()
             try:
                 cursor.execute(durationSQLStr)
