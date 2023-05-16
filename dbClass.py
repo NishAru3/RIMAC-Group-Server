@@ -212,18 +212,18 @@ class dbClass:
 
     
 
-    def getFloorData(self, floor, date):
-        if self.check_conn():
-            SQLStr = f"SELECT * FROM cse191.rimac_data WHERE idfloor_a_rimac={floor} AND ts_5min BETWEEN '{date} 00:00:00' AND '{date} 23:59:59' "
-            cursor = self.db.cursor()
-            try:
-                cursor.execute(SQLStr)
-                data = cursor.fetchall()
-                data_df = pd.DataFrame.from_dict(data)
-                return data_df
-            except Exception as e:
-                print(e)
-            return None
+    # def getFloorData(self, floor, date):
+    #     if self.check_conn():
+    #         SQLStr = f"SELECT * FROM cse191.rimac_data WHERE idfloor_a_rimac={floor} AND ts_5min BETWEEN '{date} 00:00:00' AND '{date} 23:59:59' "
+    #         cursor = self.db.cursor()
+    #         try:
+    #             cursor.execute(SQLStr)
+    #             data = cursor.fetchall()
+    #             data_df = pd.DataFrame.from_dict(data)
+    #             return data_df
+    #         except Exception as e:
+    #             print(e)
+    #         return None
             
             
     def timeoutCheck(self):

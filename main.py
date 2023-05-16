@@ -128,14 +128,14 @@ def process_get_all_data(response: Response, data: TimeInfo):
     }
 
 
-@app.get('/get-floor-data')
-def process_get_floor_data(response: Response, floor: int = 1, date: str | None = None):
-    setHeaders(response)
+# @app.get('/get-floor-data')
+# def process_get_floor_data(response: Response, floor: int = 1, date: str | None = None):
+#     setHeaders(response)
     
-    data = cse191db.getFloorData(floor, date)
-    if data:
-        return data.to_json()
-    return {"resp": "Error occured"}
+#     data = cse191db.getFloorData(floor, date)
+#     if data:
+#         return data.to_json()
+#     return {"resp": "Error occured"}
     
     
 @app.on_event("startup")
