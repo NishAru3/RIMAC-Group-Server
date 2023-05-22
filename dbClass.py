@@ -137,7 +137,7 @@ class dbClass:
             result = cursor.fetchall()
             try:
                 ts = time.time()
-                timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if len(result) == 0: #Insert if not registered
                     sqlstr = f"INSERT INTO cse191.devices (mac,  lastseen_ts, groupname, groupnumber, status)\
                         VALUES (\"{data.espmac}\", \"{timestamp}\", \"CSE191\", 0, \"ACTIVE\");"
@@ -156,7 +156,7 @@ class dbClass:
         if self.check_conn():
             
             ts = time.time()
-            timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
             cursor = self.db.cursor()
 
             registerSQLString = f"UPDATE cse191.devices \
