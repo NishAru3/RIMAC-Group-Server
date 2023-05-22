@@ -127,7 +127,6 @@ def process_log_devices(response: Response, data: DeviceLog):
 @app.get('/get-floor-data')
 def process_get_floor_data(response: Response, floor: int = 1, date: str | None = None):
     setHeaders(response)
-    
     data = cse191db.getFloorData(floor, date)
     if data:
         return data.to_json()

@@ -221,9 +221,6 @@ class dbClass:
     #         return output
     #     return False
     
-
-    
-
     def getFloorData(self, floor, date=None):
         if self.check_conn():
             if not date:
@@ -235,7 +232,7 @@ class dbClass:
                 data = cursor.fetchall()
                 data_df = pd.DataFrame.from_dict(data)
                 data_df.columns = [
-                    "floor_id",
+                    "floor_number",
                     "ts_5min",
                     "xy_array",
                     "floor_name"
