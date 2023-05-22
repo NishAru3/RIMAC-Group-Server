@@ -112,16 +112,17 @@ def process_log_devices(response: Response, data: DeviceLog):
                     "rssi_threshold": localSettings["rssi_limit"]
                 }
     
-# @app.get('/get-data-from-time')
-# def process_get_all_data(response: Response, data: TimeInfo):
-#     setHeaders(response)
-#     if (data.time):
-#         row = cse191db.getDataFromTime(data.time)
-#         if (row):
-#             return json.dumps(row)
-#     return {
-#         "response": "Failed"
-#     }
+
+@app.get('/get-data-from-time')
+def process_get_data_from_time(response: Response, data: TimeInfo):
+    setHeaders(response)
+    if (data.time):
+        row = cse191db.getDataFromTime(data.time)
+        if (row):
+            return json.dumps(row)
+    return {
+        "response": "Failed"
+    }
 
 
 @app.get('/get-floor-data')
