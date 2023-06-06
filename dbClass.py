@@ -275,3 +275,71 @@ class dbClass:
             except Error as e:
                 print(e)
         return False
+
+    def getDF(self, time):
+        if self.check_conn():
+            start_time = time
+                    
+            # Convert the string to a datetime object
+            datetime_object = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+
+            # Add 20 seconds to the datetime object
+            new_datetime = datetime_object + timedelta(seconds=20)
+
+            # Convert the new datetime back to a string
+            end_time = new_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+            hashmap = {
+                "E0:5A:1B:9C:FD:90": 2,
+                "CC:50:E3:A8:F3:00": 1,
+                "CC:50:E3:A8:D9:6C": 3,
+                "80:7D:3A:BC:C6:30": 12,
+                "E0:5A:1B:A0:57:0C": 20,
+                "3C:71:BF:63:83:28": 22,
+                "E0:5A:1B:A0:40:F8": 8,
+                "E0:5A:1B:A0:37:D8": 4,
+                "E0:5A:1B:A0:1F:D0": 5,
+                "E0:5A:1B:A0:38:C0": 6,
+                "E0:5A:1B:A0:3D:C8": 7,
+                "E0:5A:1B:A0:2A:28": 17,
+                "E0:5A:1B:A0:1E:88": 11,
+                "A4:CF:12:43:6A:A0": 9,
+                "E0:5A:1B:A0:1A:C0": 13,
+                "E0:5A:1B:A0:33:C4": 14,
+                "3C:71:BF:64:3B:74": 15,
+                "E0:5A:1B:A0:51:9C": 23,
+                "3C:71:BF:62:C2:B8": 16,
+                "E0:5A:1B:A0:4C:84": 18,
+                "3C:71:BF:64:26:74": 24,
+                "E0:5A:1B:A0:3E:7C": 19,
+                "E0:5A:1B:A0:2F:B8": 21
+            }
+            try:
+                cursor = self.db.cursor()
+                print("SELECT * FROM cse191.ble_logs WHERE log_ts BETWEEN '{}' AND '{}' GROUP BY ble_mac ASC".format(start_time, end_time))
+                cursor.execute("SELECT * FROM cse191.ble_logs WHERE log_ts BETWEEN '{}' AND '{}' GROUP BY ble_mac ASC".format(start_time, end_time))
+                results = cursor.fetchall()
+                # print(results)
+                df = pd.DataFrame()
+                cur_device = results[0][3]
+                rowarray = ["PLACEHOLDER", -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, time]
+                for i in range(0, len(results) - 1): 
+                    rowarray[0] = results[i][3]
+                    while (results[i][3] == cur_device):
+                        index = hashmap.get(results[i][1])
+                        rowarray[index] = results[i][2]
+                        i += 1
+                    if results[i][3] != cur_device:
+                        cur_device = results[i][3]
+                        df = pd.concat([df, pd.DataFrame([rowarray])], ignore_index=True)
+                        # reset for next device
+                        rowarray = [results[i][3], -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, -150, time]
+                        index = hashmap.get(results[i][1])
+                        rowarray[index] = results[i][2]
+                # append the remaining ones (issue)
+                df = pd.concat([df, pd.DataFrame([rowarray])], ignore_index=True)
+                df.columns=['DEVICE MAC','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', "TIME"]
+                print(df)
+                return df
+            except Error as  e:
+                print(f"The error '{e}' occurred")

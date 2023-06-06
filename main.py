@@ -124,6 +124,12 @@ def process_get_data_from_time(response: Response, data: TimeInfo):
         "response": "Failed"
     }
 
+@app.get('/req-dataframe', response_class=PlainTextResponse)
+def get_dataframe(response: Response, time: Union[str, None] = None):
+    setHeaders(response)
+    df = cse191db.getDF(time)
+    return df.to_string()
+
 
 @app.get('/get-floor-data')
 def process_get_floor_data(response: Response, floor: int = 1, date: str | None = None):
